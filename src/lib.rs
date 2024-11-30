@@ -53,7 +53,7 @@ fn init(_: RString) -> State {
 #[info]
 fn info() -> PluginInfo {
     PluginInfo {
-        name: "Hyprland Windows".into(),
+        name: "Windows".into(),
         icon: "window-new".into(),
     }
 }

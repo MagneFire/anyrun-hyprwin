@@ -25,19 +25,29 @@ impl Deref for ClientId {
 
 #[init]
 fn init(_: RString) -> State {
-    State {
-        clients: Clients::get()
-            .expect("Failed to get clients")
-            .iter()
-            .filter(|client| !(client.title.is_empty() && client.class.is_empty()))
-            .enumerate()
-            .map(|(idx, client)| ClientId {
-                id: idx as u64,
-                search: format!("{}: {}", client.class, client.title),
-                client: client.clone(),
-            })
-            .collect(),
-    }
+
+    let clients = match Clients::get() {
+        Ok(clients) => clients,
+        Err(why) => {
+            eprintln!("Failed to get clients: {}", why);
+            return State {
+                clients: Vec::new(),
+            };
+        }
+    };
+
+    let client_ids = clients
+    .iter()
+    .filter(|client| !(client.title.is_empty() && client.class.is_empty()))
+    .enumerate()
+    .map(|(idx, client)| ClientId {
+        id: idx as u64,
+        search: format!("{}: {}", client.class, client.title),
+        client: client.clone(),
+    })
+    .collect();
+
+    State {clients: client_ids}
 }
 
 #[info]
